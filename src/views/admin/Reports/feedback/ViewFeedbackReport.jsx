@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import FeedbackTable from './FeedbackTable'
 import { feedbackColumns } from './FeedbackColumns'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
+import axios from 'axios'
 
 export default function ViewFeedbackReport() {
     const feedbackData = [
@@ -49,6 +50,25 @@ export default function ViewFeedbackReport() {
         // Add more feedback items as needed
     ]
 
+    // 
+
+    const [feedbackData1, setFeedbackData1] = useState([]);
+
+    useEffect(() => {
+        const fetchfeedbackData = async () => {
+            try {
+                // Update the URL to your specific API endpoint for fetching FeedBackReport
+                const response = await axios.get('http://localhost:5062/api/FeedBackReport')
+                setFeedbackData1(response.data) // Assume the response data is the array of FeedBackReport
+            } catch (error) {
+                console.error('Failed to fetch vehicles:', error)
+            }
+        }
+        fetchfeedbackData()
+    }, [])
+
+    // 
+
     function handlePrint() {
         window.print()
     }
@@ -73,7 +93,7 @@ export default function ViewFeedbackReport() {
             <div className="flex flex-col p-6 bg-white rounded-lg">
                 {/* Ensure the container ID is correct for the PDF capture */}
                 <div id="feedback-report-container">
-                    <FeedbackTable columns={feedbackColumns} data={feedbackData} />
+                    <FeedbackTable columns={feedbackColumns} data={feedbackData1} />
                 </div>
                 <div className="flex mt-4">
                     <button
